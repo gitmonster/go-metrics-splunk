@@ -38,21 +38,20 @@ func Splunk(r metrics.Registry, d time.Duration, splunkAddr string, retry int) {
 	rep.run()
 }
 
-func (r *splunkForwarder) createClient() (err error) {
+func (r *splunkForwarder) createClient() error {
 	cli, err := retry(func() (interface{}, error) {
 		return NewSplunkClient(r.addr)
-	}, r.retry, "create splunk client")
+	}, r.retry, "create client")
 	if err != nil {
 		return err
 	}
-
 	r.client = cli.(*SplunkClient)
 	return nil
 }
 
 func (r *splunkForwarder) run() {
 	sendTicker := time.Tick(r.interval)
-	r.client.Stream(r.ch)
+	go r.client.Stream(r.ch)
 
 	for {
 		select {
