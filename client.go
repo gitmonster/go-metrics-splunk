@@ -18,7 +18,7 @@ type SplunkClient struct {
 
 type SplunkMessage struct {
 	Time        time.Time              `json:"time"`
-	Measurement string                 `json:"mesurement"`
+	Measurement string                 `json:"measurement"`
 	Fields      map[string]interface{} `json:"fields"`
 }
 
