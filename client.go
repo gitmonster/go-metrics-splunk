@@ -17,9 +17,9 @@ type SplunkClient struct {
 }
 
 type SplunkMessage struct {
-	Time        time.Time              `json:"time"`
-	Measurement string                 `json:"measurement"`
-	Fields      map[string]interface{} `json:"fields"`
+	Time   time.Time              `json:"time"`
+	Name   string                 `json:"name"`
+	Fields map[string]interface{} `json:"fields"`
 }
 
 func NewSplunkClient(addrStr string) (*SplunkClient, error) {

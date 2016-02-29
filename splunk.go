@@ -68,7 +68,7 @@ func (r *splunkForwarder) send() {
 		switch m := i.(type) {
 		case metrics.Counter:
 			r.ch <- SplunkMessage{
-				Measurement: fmt.Sprintf("%s.count", name),
+				Name: fmt.Sprintf("%s.count", name),
 				Fields: map[string]interface{}{
 					"value": m.Count(),
 				},
@@ -76,7 +76,7 @@ func (r *splunkForwarder) send() {
 			}
 		case metrics.Gauge:
 			r.ch <- SplunkMessage{
-				Measurement: fmt.Sprintf("%s.gauge", name),
+				Name: fmt.Sprintf("%s.gauge", name),
 				Fields: map[string]interface{}{
 					"value": m.Value(),
 				},
@@ -84,7 +84,7 @@ func (r *splunkForwarder) send() {
 			}
 		case metrics.GaugeFloat64:
 			r.ch <- SplunkMessage{
-				Measurement: fmt.Sprintf("%s.gauge", name),
+				Name: fmt.Sprintf("%s.gauge", name),
 				Fields: map[string]interface{}{
 					"value": m.Value(),
 				},
@@ -93,7 +93,7 @@ func (r *splunkForwarder) send() {
 		case metrics.Histogram:
 			ps := m.Percentiles([]float64{0.5, 0.75, 0.95, 0.99, 0.999, 0.9999})
 			r.ch <- SplunkMessage{
-				Measurement: fmt.Sprintf("%s.histogram", name),
+				Name: fmt.Sprintf("%s.histogram", name),
 				Fields: map[string]interface{}{
 					"count":    m.Count(),
 					"max":      m.Max(),
@@ -112,7 +112,7 @@ func (r *splunkForwarder) send() {
 			}
 		case metrics.Meter:
 			r.ch <- SplunkMessage{
-				Measurement: fmt.Sprintf("%s.meter", name),
+				Name: fmt.Sprintf("%s.meter", name),
 				Fields: map[string]interface{}{
 					"count": m.Count(),
 					"m1":    m.Rate1(),
@@ -125,7 +125,7 @@ func (r *splunkForwarder) send() {
 		case metrics.Timer:
 			ps := m.Percentiles([]float64{0.5, 0.75, 0.95, 0.99, 0.999, 0.9999})
 			r.ch <- SplunkMessage{
-				Measurement: fmt.Sprintf("%s.timer", name),
+				Name: fmt.Sprintf("%s.timer", name),
 				Fields: map[string]interface{}{
 					"count":    m.Count(),
 					"max":      m.Max(),
