@@ -150,3 +150,18 @@ func (p *SplunkClient) Close() {
 	p.disconnect()
 	p.done <- true
 }
+
+func retry(fn func() (interface{}, error), cnt int, msg string) (res interface{}, err error) {
+	ret := 1
+	for ret <= cnt {
+		if res, err = fn(); err == nil {
+			return
+		}
+
+		logger.Infof("retry [%s] wait %d secs", msg, ret)
+		time.Sleep(time.Duration(ret) * time.Second)
+		ret++
+	}
+
+	return
+}

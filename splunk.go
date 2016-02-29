@@ -17,23 +17,37 @@ type splunkForwarder struct {
 	ch       chan SplunkMessage
 	interval time.Duration
 	client   *SplunkClient
+	addr     string
+	retry    int
 }
 
 // Splunk starts a Splunk metrics forwarder from the given registry at each d interval.
-func Splunk(r metrics.Registry, d time.Duration, splunkAddr string) {
+func Splunk(r metrics.Registry, d time.Duration, splunkAddr string, retry int) {
 	rep := &splunkForwarder{
 		ch:       make(chan SplunkMessage),
+		addr:     splunkAddr,
+		retry:    retry,
 		reg:      r,
 		interval: d,
 	}
 
-	c, err := NewSplunkClient(splunkAddr)
-	if err != nil {
+	if err := rep.createClient(); err != nil {
 		logger.Errorf("unable to create client: %s", err)
 		return
 	}
-	rep.client = c
 	rep.run()
+}
+
+func (r *splunkForwarder) createClient() (err error) {
+	cli, err := retry(func() (interface{}, error) {
+		return NewSplunkClient(r.addr)
+	}, r.retry, "create splunk client")
+	if err != nil {
+		return err
+	}
+
+	r.client = cli.(*SplunkClient)
+	return nil
 }
 
 func (r *splunkForwarder) run() {
